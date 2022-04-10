@@ -1,2 +1,2 @@
-# ghost
-dis is a programmin language uwu
+# ~ Ghost ~
+Dis is a programmin language
