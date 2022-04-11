@@ -18,6 +18,8 @@ tkn_count = int()
 
 Const = dict()
 Var = dict()
+# TODO: Should I add argc and argv
+# NOTE: Cool Thing
 
 # Keywords
 class Keywords(enum.Enum):
@@ -226,6 +228,8 @@ def parse_var(tree, tokens):
 def parse_if(tree, tokens):
   global tkn_count
 
+  # TODO: Check if argument is true or false
+
   parent = tokens[tkn_count]
   child1 = tokens[tkn_count + 1]
   child2 = tokens[tkn_count + 2]
@@ -297,7 +301,7 @@ def create_parse_from_lex(tokens):
       if rtokens != 4: print("No Enough Argument for While Loop"); exit(1)
 
       tkn_count += 1
-      while (tokens[tkn_count][0] != Keywords.K_END.name and
+      while (tokens[tkn_count][0]!= Keywords.K_END.name and
              tokens[tkn_count][0] != Keywords.K_IF.name):
         
         if tokens[tkn_count][0] == Keywords.K_SYSCALL3.name:
