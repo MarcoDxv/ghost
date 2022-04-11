@@ -18,7 +18,7 @@ python3 ./ghost.py hello.ght -r hello --debug
 ```
 
 ### What I want to Implement
-I want my language to be:
+I want my language to be: <br/>
  [-] Turing-Complete ( [turing-machine](https://en.wikipedia.org/wiki/Turing_machine) and  [rule110](https://en.wikipedia.org/wiki/Rule_110) ) <br/>
  [-] Crossplatform ( can work on [Linux](https://en.wikipedia.org/wiki/Linux), [MacOS](https://en.wikipedia.org/wiki/MacOS) an [Windows](https://en.wikipedia.org/wiki/Microsoft_Windows) ) <br/>
  [-] Optimized <br/>
