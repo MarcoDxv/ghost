@@ -16,9 +16,12 @@ import subprocess
 data_pos = 1
 tkn_count = int()
 
+Macros = dict()
 Const = dict()
 Var = dict()
+
 # TODO: Should I add argc and argv
+# TODO: Adding Macros :D
 # NOTE: Cool Thing
 
 # Keywords
@@ -28,6 +31,7 @@ class Keywords(enum.Enum):
 
   K_IF      = enum.auto()
   K_WHILE   = enum.auto()
+  K_MACRO   = enum.auto()
   K_LESS    = enum.auto()
   K_GREATER = enum.auto()
   K_EQUALS  = enum.auto()
@@ -42,6 +46,7 @@ class Keywords(enum.Enum):
 
   K_SYMB_EQUALS   = enum.auto()
   K_SYMB_COMMENTS = enum.auto()
+  K_SYMB_DOT      = enum.auto()
 
   K_TRUE  = enum.auto()
   K_FALSE = enum.auto()
@@ -62,6 +67,7 @@ def check_word_from_file(word):
 
   elif word == "if": return Keywords.K_IF
   elif word == "while": return Keywords.K_WHILE
+  elif word == "macro": return Keywords.K_MACRO
   elif word == "less": return Keywords.K_LESS
   elif word == "greater": return Keywords.K_GREATER
   elif word == "equals": return Keywords.K_EQUALS
@@ -83,7 +89,7 @@ def check_word_from_file(word):
   elif word == "end": return Keywords.K_END
 
   elif re.match("[0-9]+", word): return Types.T_INT
-  elif re.match("[a-zA-Z]", word): return Types.T_NAME
+  elif re.match("[\S]+", word): return Types.T_NAME
   else: return word
 
 def create_lex_from_file(code):
@@ -108,6 +114,7 @@ def create_lex_from_file(code):
         print("<No Way> Are you really trying to put a \";\" ???");
         exit(1)
       
+      # TODO: put keyword in lowercase for checks
       keyword = check_word_from_file("".join(tmp))
       
       if keyword in list(Keywords):
@@ -122,6 +129,9 @@ def create_lex_from_file(code):
       
         elif keyword == Keywords.K_WHILE:
           tokens.append([Keywords.K_WHILE.name, "".join(tmp)]); tmp = []
+
+        elif keyword == Keywords.K_MACRO:
+          tokens.append([Keywords.K_MACRO.name, "".join(tmp)]); tmp = []
 
         elif keyword == Keywords.K_LESS:
           tokens.append([Keywords.K_LESS.name, "".join(tmp)]); tmp = []
@@ -169,6 +179,8 @@ def create_lex_from_file(code):
         elif keyword == Types.T_NAME:
           tokens.append([Types.T_NAME.name, "".join(tmp)]); tmp = []
 
+      # if word == ".": tokens.append([Keywords.K_SYMB_DOT.name, word]); tmp = []
+
     elif word == "\"" and _tid == "":
       _tid = "string"; tmp = []
 
@@ -184,6 +196,8 @@ def create_lex_from_file(code):
   return tokens
 
 # Parser
+
+# NOTE: Better Errors Messages
 def parse_syscall1(tree, tokens, tkn_count):
   parent = tokens[tkn_count]
   child1 = tokens[tkn_count - 1]    
@@ -221,9 +235,23 @@ def parse_var(tree, tokens):
   child1 = tokens[tkn_count - 1] # name
   child2 = tokens[tkn_count + 2] # value
 
-  if tokens[tkn_count + 1][1] != "=":print("Error: Should be an \"=\""); exit(1)
+  if tokens[tkn_count + 1][1] != "=": print("Error: Should be an \"=\""); exit(1)
 
   tree.append([parent, child1, child2])
+
+def parse_const(tree, tokens):
+  global tkn_count
+
+  parent = tokens[tkn_count] # const
+  child1 = tokens[tkn_count - 1] # name
+  child2 = tokens[tkn_count + 2] # value
+
+  if tokens[tkn_count + 1][1] != "=": print("Error: Should be an \"=\""); exit(1)
+
+  tree.append([parent, child1, child2])
+
+# NOTE: Why make functions that makes the same things ???
+# NOTE: (add and sub, if and while...)
 
 def parse_if(tree, tokens):
   global tkn_count
@@ -261,10 +289,47 @@ def parse_if(tree, tokens):
 
   tree.append([parent, child1, child2, child3, child4])
 
+def parse_macro(tree, tokens):
+  global tkn_count
+  global Macros
+
+  # TODO: Check all arguments not just if one
+
+  parent = tokens[tkn_count] # macro
+  child1 = tokens[tkn_count + 2] # name
+  child2 = tokens[tkn_count + 1] # argument
+  child4 = list() # body
+  
+  if child1[0] != Types.T_NAME.name: print("macro name should be a name not %s" % child1[0]); exit(1)
+  elif child2[0] != Types.T_NAME.name: print("arguments of macros are name not %s" % child2[0]); exit(1)
+
+  tkn_count += 1
+  while (tokens[tkn_count][0] != Keywords.K_END.name and
+         tokens[tkn_count][0] != Keywords.K_MACRO.name):
+        
+    if tokens[tkn_count][0] == Keywords.K_SYSCALL3.name:
+      parse_syscall3(child4, tokens, tkn_count)
+
+    elif tokens[tkn_count][0] == Keywords.K_SYSCALL1.name:
+      parse_syscall1(child4, tokens, tkn_count)
+
+    elif tokens[tkn_count][0] == Keywords.K_ADD.name:
+      parse_add(child4, tokens, tkn_count)
+
+    elif tokens[tkn_count][0] == Keywords.K_SUB.name:
+      parse_sub(child4, tokens, tkn_count)
+
+    tkn_count += 1
+
+  tree.append([parent, child1, child2, child4])
+  Macros[child1[1]] = child1[1]
+
 def create_parse_from_lex(tokens):
   print("[DEBUG] Parse the Tokens to AST...")
 
   global tkn_count
+  global Macros
+
   ast = list()
 
   while tkn_count != len(tokens):
@@ -288,6 +353,17 @@ def create_parse_from_lex(tokens):
       parse_var(ast, tokens)
       ###############################
 
+    elif tokens[tkn_count][0] == Keywords.K_CONST.name:
+      parse_const(ast, tokens)
+      ###############################
+
+    elif tokens[tkn_count][0] == Keywords.K_MACRO.name:
+      parse_macro(ast, tokens)
+      ###############################
+
+    elif tokens[tkn_count][1] in Macros:
+      ast.append([tokens[tkn_count]])
+
     elif tokens[tkn_count][0] == Keywords.K_WHILE.name:
       parent = tokens[tkn_count]
       child1 = tokens[tkn_count + 1]
@@ -302,7 +378,7 @@ def create_parse_from_lex(tokens):
 
       tkn_count += 1
       while (tokens[tkn_count][0]!= Keywords.K_END.name and
-             tokens[tkn_count][0] != Keywords.K_IF.name):
+             tokens[tkn_count][0] != Keywords.K_WHILE.name):
         
         if tokens[tkn_count][0] == Keywords.K_SYSCALL3.name:
           parenta = tokens[tkn_count]
@@ -346,6 +422,15 @@ def asm_syscall3(parser, asm_lines):
   elif parser[3][0] == Types.T_NAME.name:
     if parser[3][1] in Var:
       asm_lines.append("    lea rcx, %s\n" % Var[parser[3][1]])
+      
+      asm_lines.append("    mov rax, %s\n" % parser[1][1])
+      asm_lines.append("    mov rdi, %s\n" % parser[2][1])
+      asm_lines.append("    mov rsi, rcx\n")
+      asm_lines.append("    mov rdx, %s\n" % parser[4][1])
+      asm_lines.append("    syscall\n")
+
+    elif parser[3][1] in Const:
+      asm_lines.append("    lea rcx, %s\n" % Const[parser[3][1]])
 
       asm_lines.append("    mov rax, %s\n" % parser[1][1])
       asm_lines.append("    mov rdi, %s\n" % parser[2][1])
@@ -353,6 +438,13 @@ def asm_syscall3(parser, asm_lines):
       asm_lines.append("    mov rdx, %s\n" % parser[4][1])
       asm_lines.append("    syscall\n")
     
+    elif parser[3][1] == "mem":
+      asm_lines.append("    mov rax, %s\n" % parser[1][1])
+      asm_lines.append("    mov rdi, %s\n" % parser[2][1])
+      asm_lines.append("    mov rsi, mem\n")
+      asm_lines.append("    mov rdx, %s\n" % parser[4][1])
+      asm_lines.append("    syscall\n")
+
     else:
       print("ERROR: Undefined Name: \"%s\"" % parser[3][1])
       exit(1)
@@ -369,11 +461,30 @@ def asm_syscall1(parser, asm_lines):
   asm_lines.append("    syscall\n")
   asm_lines.append("\n")
 
-def asm_add(parser, asm_lines, Var):
+def asm_add(parser, asm_lines, Var, Const):
   asm_lines.append("    ; --- add ---\n")
-  asm_lines.append("    add byte %s, %s\n" % (Var[parser[1][1]], parser[2][1]))
+  # Arg 1
+  if parser[1][0] == Types.T_NAME.name:
+    if parser[1][1] in Var: asm_lines.append("    mov rax, %s\n" % Var[parser[1][1]])
+    elif parser[1][1] in Const: asm_lines.append("    mov rax, %s\n" % Const[parser[1][1]])
+    else: print("Undefined name: \"%s\"" % parser[1][1]); exit(1)
+
+  if parser[2][0] == Types.T_NAME.name:
+    if parser[2][1] in Var: asm_lines.append("    mov rbx, %s\n" % Var[parser[2][1]])
+    elif parser[2][1] in Const: asm_lines.append("    mov rbx, %s\n" % Const[parser[2][1]])
+    else: print("Undefined name: \"%s\"" % parser[2][1]); exit(1)
+  
+  if parser[1][0] == Types.T_INT.name: asm_lines.append("    mov rax, %s\n" % parser[1][1])
+  if parser[2][0] == Types.T_INT.name: asm_lines.append("    mov rbx, %s\n" % parser[2][1])
+
+  asm_lines.append("    add rax, rbx\n")
+  if parser[1][0] == Types.T_NAME.name:
+    if parser[1][1] in Var: asm_lines.append("    mov %s, rax\n" % Var[parser[1][1]])
+    elif parser[1][1] in Const: asm_lines.append("    mov %s, rax\n" % Const[parser[1][1]])
+  
+  else: asm_lines.append("    mov [mem], rax\n")
+
   # TODO: Check Size of the variables arguments
-  # TODO: Check if the two arguments are variable if not:
   # TODO: Store the value in the memory buffer
   asm_lines.append("\n")
 
@@ -410,6 +521,11 @@ def asm_var(parser, asm_lines, var_count):
   asm_lines.append("    mov byte [rsp-%d], %s\n" % (var_count, parser[2][1]))
   asm_lines.append("\n")
 
+def asm_const(parser, asm_lines, var_count):
+  asm_lines.append("    ; --- const ---\n")
+  asm_lines.append("    mov byte [rsp-%d], %s\n" % (var_count, parser[2][1]))
+  asm_lines.append("\n")
+
 def asm_if_cond(parser, asm_lines, if_cond, Var):
   asm_lines.append("    ; --- if condition ---\n")
   if parser[1][1] in Var: asm_lines.append("    mov rax, %s\n" % Var[parser[1][1]])
@@ -440,8 +556,31 @@ def asm_if_cond(parser, asm_lines, if_cond, Var):
   asm_lines.append("    LE%d:\n" % if_cond)
   asm_lines.append("\n")
 
+def asm_macro(parser, asm_lines):
+  asm_lines.append("    ; --- macro ---\n")
+  asm_lines.append("    LM:\n")
+  asm_lines.append("\n")
+
+  for i in parser[3]:
+    if i[0][0] == Keywords.K_SYSCALL3.name: asm_syscall3(i, asm_lines)
+    elif i[0][0] == Keywords.K_SYSCALL1.name: asm_syscall1(i, asm_lines)
+    
+    elif i[0][0] == Keywords.K_ADD.name: asm_add(i, asm_lines, Var)
+    elif i[0][0] == Keywords.K_SUB.name: asm_sub(i, asm_lines, Var)
+  asm_lines.append("\n")
+
+  # TODO: Finish Macros
+
+def asm_jump_macro(asm_lines, Macros):
+  asm_lines.append("    ; --- macro jump ---\n")
+  asm_lines.append("    jmp LM\n")
+  asm_lines.append("\n")
+
 def generate_nasm_linux_x86_64_from_parser(parser):
   global data_pos
+
+  global Const
+  global Macros
   global Var
 
   var_count = int()
@@ -468,7 +607,7 @@ def generate_nasm_linux_x86_64_from_parser(parser):
       asm_syscall3(parser[i], asm_lines)
     
     elif parser[i][0][0] == Keywords.K_ADD.name:
-      asm_add(parser[i], asm_lines, Var)
+      asm_add(parser[i], asm_lines, Var, Const)
 
     elif parser[i][0][0] == Keywords.K_SUB.name:
       asm_sub(parser[i], asm_lines, Var)
@@ -476,14 +615,25 @@ def generate_nasm_linux_x86_64_from_parser(parser):
     elif parser[i][0][0] == Keywords.K_WHILE.name:
       asm_while(parser[i], asm_lines)
 
+    elif parser[i][0][0] == Keywords.K_MACRO.name:
+      asm_macro(parser[i], asm_lines)
+    
+    elif parser[i][0][1] in Macros:
+      asm_jump_macro(asm_lines, Macros)
+
     elif parser[i][0][0] == Keywords.K_IF.name:
-        asm_if_cond(parser[i], asm_lines, if_cond, Var)
-        if_cond += 1;
+      asm_if_cond(parser[i], asm_lines, if_cond, Var)
+      if_cond += 1;
     
     elif parser[i][0][0] == Keywords.K_VAR.name:
-        asm_var(parser[i], asm_lines, var_count)
-        Var[parser[i][1][1]] = "[rsp-%d]" % var_count
-        var_count += 1
+      asm_var(parser[i], asm_lines, var_count)
+      Var[parser[i][1][1]] = "[rsp-%d]" % var_count
+      var_count += 1
+
+    elif parser[i][0][0] == Keywords.K_CONST.name:
+      asm_const(parser[i], asm_lines, var_count)  
+      Const[parser[i][1][1]] = "[rsp-%d]" % var_count  
+      var_count += 1 
 
   print("[DEBUG] Succesfully Generated Assembly From Parser\n")
   
