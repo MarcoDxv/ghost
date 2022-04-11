@@ -1,0 +1,5 @@
+int letter = 65.
+
+1 letter 1 1 syscall3.
+letter add 32.
+1 letter 1 1 syscall3.
