@@ -5,7 +5,7 @@ You can only use it on linux.
 ## Installation
 I don't know how to install it :(
 
-## Hello, World
+### Hello, World
 ```
 13 "Hello, World" 1 1 syscall3.
 0 60 syscall1.
