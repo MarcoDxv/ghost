@@ -19,10 +19,10 @@ python3 ./ghost.py hello.ght -r hello --debug
 
 ### What I want to Implement
 I want my language to be:
- [-] Turing-Complete <br/>
- [-] Crossplatform <br/>
- [-] <br/>
+ [-] Turing-Complete ([Turing-Machine](https://en.wikipedia.org/wiki/Turing_machine), [Rule110](https://en.wikipedia.org/wiki/Rule_110)) <br/>
+ [-] Crossplatform (Can work on [Linux](https://en.wikipedia.org/wiki/Linux), [MacOS](https://en.wikipedia.org/wiki/MacOS) an [Windows](https://en.wikipedia.org/wiki/Microsoft_Windows)) <br/>
  [-] Optimized <br/>
+ [-] [Self-Hosted](https://en.wikipedia.org/wiki/Self-hosting_(compilers)) <br/>
 
 ## License
 MIT
