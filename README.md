@@ -4,6 +4,7 @@ You can only use it on linux.
 
 ## Installation
 I don't know how to install it :(
+To use it I thing you need [nasm](https://www.nasm.us/) an [ld](https://linux.die.net/man/1/ld)
 
 ### Hello, World
 ```
