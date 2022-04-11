@@ -12,7 +12,7 @@ To use it I think you need [nasm](https://www.nasm.us/) an [ld](https://linux.di
 0 60 syscall1.
 ```
 
-```console
+```
 python3 ./ghost.py hello.ght -r hello --debug
 ./hello
 ```
