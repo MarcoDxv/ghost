@@ -1,3 +1,10 @@
+# This is my code
+# anyway this is the python
+# version of ghost lul
+# code is very fun (sometimes...)
+# Programmer: MarcoDXV (MarcoDxv)
+# Language: Python (CPython)
+
 import re
 import sys
 import enum
