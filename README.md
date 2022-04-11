@@ -6,7 +6,7 @@ You can only use it on linux.
 I don't know how to install it :(
 
 ## What I want to Implement
-I wan my language to be:
+### I want my language to be:
 - Turing-Complete
 - Crossplatform
 
