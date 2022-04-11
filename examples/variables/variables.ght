@@ -1,0 +1,11 @@
+// Sorry There is only integer type
+int x var = 48.
+int y var = 48.
+int z var = 55.
+
+1 x  1 1 syscall3.
+1 y  1 1 syscall3.
+1 z  1 1 syscall3.
+1 "" 1 1 syscall3.
+
+0 60 syscall1.
