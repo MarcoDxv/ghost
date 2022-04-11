@@ -1,2 +1,11 @@
-13 "Hello, World" 1 1 syscall3.
-0 60 syscall1.
+13 "Hello, World" 1 1 syscall3. // 13 is the len of "Hello, World" + new line
+                                // "Hello World" is the string that will be print on the screen
+                                // 1 is the file descriptor for linux syscalls
+                                // 1 is the syscall number (write)
+                                // syscall3 is the operation to proceed the syscall
+                                // with 3 argument (without the syscall number)
+                                
+0 60 syscall1. // 0 will be the exit code
+               // 60 is the syscall number (exit)
+               // syscall1 is the operation to proceed
+               // the syscall with 1 argument (without the syscall number)
