@@ -1,8 +1,0 @@
-int x var = 48. // 48 is "0" in ascii code
-int y var = 55. // 55 is "7" in ascii code
-int z var = 10. // 10 means "new line" in ascii code
-
-1 x 1 1 syscall3. // print "0"
-1 x 1 1 syscall3. // print "0"
-1 y 1 1 syscall3. // print "7"
-1 z 1 1 syscall3. // print "new line"
