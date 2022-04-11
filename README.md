@@ -1,24 +1,14 @@
 # ~ Ghost ~
 Dis is a programmin language uwu...
+You can only use it on linux.
 
-## Quick Start
+## Installation
+I don't know how to install it :(
 
-Ghost Compilition Modes:
- --debug, --delete, --optimized
+## Whay I want to Implement
+I wan my language to be:
+- Turing-Complete
+- Crossplatform
 
-Todo:
-  [x] Create Files
-  [x] Make the Lexer Work
-  [x] Make the Parser
-  [x] Make the Assembly code generator
-  [-] Turing Complete
-  [-] Self-hosted
-  [-] Crossplatform
-
-Ghost Capacities:
-  [-] All Syscalls
-  [x] If Conditions
-  [x] While Loops
-  [x] Variables
-  [-] Constantes
-  ...
+## License
+MIT
