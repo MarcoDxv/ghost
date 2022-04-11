@@ -2,9 +2,8 @@
 
 ## Getting Started
 
-```usage
+### Usage
 python3 ./ghost.py [filename] [flag] [filename] [mode]
-```
 
 ## Bruh
 Dis is a programmin language
