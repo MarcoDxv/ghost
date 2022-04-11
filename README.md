@@ -1,5 +1,5 @@
 # ~ Ghost ~
-Dis is a programmin language uwu...
+Dis is a programmin language uwu...\n
 You can only use it on linux.
 
 ## Installation
