@@ -1,0 +1,5 @@
+macro display in.
+  1 1 syscall3.
+end.
+
+13 "Hello, World" display.
