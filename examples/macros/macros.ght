@@ -1,5 +1,8 @@
-macro display in.
-  1 1 syscall3.
-end.
+macro display in. // This is how to define a macro
+  1 1 syscall3.   // This code will be placed where we
+                  // call the macro
+end.              // end of macro definiation
 
-13 "Hello, World" display.
+13 "Hello, World" display. // Here, display will be replaced by "1 1 syscall3"
+
+// I'm tired... X-\
