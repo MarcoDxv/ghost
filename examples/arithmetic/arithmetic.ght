@@ -1,5 +1,7 @@
-int letter = 65. // The Letter "A" in ascii code
+// int letter = 65.  The Letter "A" in ascii code
 
-1 letter 1 1 syscall3. // Print Letter Before Addition
-letter add 32. // It will make a lowercase "a" (97)
-1 letter 1 1 syscall3. // Print Letter After Addtion
+// 1 letter 1 1 syscall3.  Print Letter Before Addition
+// letter add 32.  It will make a lowercase "a" (97)
+// 1 letter 1 1 syscall3.  Print Letter After Addtion
+
+// Don't work for now
