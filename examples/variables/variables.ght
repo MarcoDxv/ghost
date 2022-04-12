@@ -1,11 +1,13 @@
 // Sorry There is only integer type
-int x var = 48. // "0" in ascii code
-int y var = 48. // "0" again :-|
-int z var = 55. // "7" in ascii code
+// int x var = 48. // "0" in ascii code
+// int y var = 48. // "0" again :-|
+// int z var = 55. // "7" in ascii code
 
-1 x  1 1 syscall3.
-1 y  1 1 syscall3.
-1 z  1 1 syscall3.
-1 "" 1 1 syscall3.
+// 1 x  1 1 syscall3.
+// 1 y  1 1 syscall3.
+// 1 z  1 1 syscall3.
+// 1 "" 1 1 syscall3.
 
-0 60 syscall1.
+// 0 60 syscall1.
+
+// Don't work for now
