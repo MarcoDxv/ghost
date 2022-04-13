@@ -1,0 +1,5 @@
+macro sys_write in. 1. end.
+
+macro display in.
+  13 "Hello, World" 1 sys_write syscall3.
+end.
