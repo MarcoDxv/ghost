@@ -219,7 +219,7 @@ def create_lex_from_file(code):
 
 # It was create_parser_from_lex
 def check_lex_for_error(tokens):
-  imp_dir = "./examples/imports/"
+  imp_dir = "./includes/"
 
   # TODO: Post on GitHub
 
@@ -260,8 +260,6 @@ def generate_nasm_linux_x86_64_from_parser(parser):
     # Macro
     if parser[curr_tkn][1] in Macros:
       uwu = curr_tkn # uwu
-      
-      print(parser)
 
       # I hate programming >:( GFEZRARGTER 6453REFZHgyjtrhez6Y245 fuck python T-T
       for o in Macros[parser[curr_tkn][1]]: # Fucking things I don't understand why I wasn't working
@@ -271,8 +269,6 @@ def generate_nasm_linux_x86_64_from_parser(parser):
       len_ = len(Macros[parser[curr_tkn][1]]) # Get the len of the body of the macro
 
       parser.pop(curr_tkn)
-
-      print(parser)
 
       curr_tkn = curr_tkn - (len_ + 1) # Go Back some tokens
       # Does it work ?
@@ -296,15 +292,16 @@ def generate_nasm_linux_x86_64_from_parser(parser):
       # Is RSI a String or not ?
       if parser[curr_tkn - 3][0] == Types.T_STR.name:
         asm_lines.insert(data_pos, "    LC%d db \"%s\", 0x0A, 0x00\n" % (data_pos, parser[curr_tkn - 3][1]))
+
         asm_lines.append("    mov rsi, LC%d\n" % data_pos)
-      
+        data_pos += 1
+
       else:
         asm_lines.append("    mov rsi, %s\n" % parser[curr_tkn - 3][1])
 
       asm_lines.append("    mov rdx, %s\n" % parser[curr_tkn - 4][1])
       asm_lines.append("    syscall\n")
       asm_lines.append("\n")
-      data_pos += 1
 
     # Macro again
     elif parser[curr_tkn][0] == Keywords.K_MACRO.name:
@@ -323,10 +320,11 @@ def generate_nasm_linux_x86_64_from_parser(parser):
         curr_tkn += 1
     
       Macros[macro.name] = macro.tokens
+      print(Macros)
 
     # Import
     elif parser[curr_tkn][0] == Keywords.K_IMPORT.name:
-      import_dir  = "./examples/imports"
+      import_dir  = "./includes"
       import_file = import_dir + "/" + parser[curr_tkn + 1][1]
 
       print("Importing: \"%s/%s\"\n" % (import_dir, parser[curr_tkn + 1][1]))
