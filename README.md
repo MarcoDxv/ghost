@@ -11,15 +11,14 @@ To use it I think you need [nasm](https://www.nasm.us/) an [ld](https://linux.di
 13 "Hello, World" 1 1 syscall3.
 0 60 syscall1.
 ```
-or
+##### or
 ```
 import "std.ghost"
 
 13 "Hello, World" display.
 0 exit.
 ```
-
-
+##### and compile with...
 ```
 python3 ./ghost.py hello.ght -r hello --debug
 ./hello
