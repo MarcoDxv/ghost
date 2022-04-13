@@ -11,7 +11,7 @@ To use it I think you need [nasm](https://www.nasm.us/) an [ld](https://linux.di
 13 "Hello, World" 1 1 syscall3.
 0 60 syscall1.
 ```
-**or**
+**or use this code**
 ```
 import "std.ghost"
 
