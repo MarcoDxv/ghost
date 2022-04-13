@@ -46,6 +46,8 @@ class Keywords(enum.Enum):
   K_EQUALS  = enum.auto()
   K_IN      = enum.auto()
 
+  K_IMPORT = enum.auto()
+
   K_VAR   = enum.auto()
   K_CONST = enum.auto()
 
@@ -84,6 +86,8 @@ def check_word_from_file(word):
 
   elif word == "true": return Keywords.K_TRUE
   elif word == "false": return Keywords.K_FALSE
+
+  elif word == "import": return Keywords.K_IMPORT
 
   elif word == "var": return Keywords.K_VAR
   elif word == "const": return Keywords.K_CONST
@@ -129,6 +133,7 @@ def create_lex_from_file(code):
       keyword = check_word_from_file("".join(tmp))
       
       if keyword in list(Keywords):
+        # TODO: Optimize this code
         if keyword == Keywords.K_SYSCALL1:
           tokens.append([Keywords.K_SYSCALL1.name, "".join(tmp)]); tmp = []
         
@@ -164,6 +169,9 @@ def create_lex_from_file(code):
 
         elif keyword == Keywords.K_END:
           tokens.append([Keywords.K_END.name, "".join(tmp)]); tmp = []
+
+        elif keyword == Keywords.K_IMPORT:
+          tokens.append([Keywords.K_IMPORT.name, "".join(tmp)]); tmp = []
 
         elif keyword == Keywords.K_VAR:
           tokens.append([Keywords.K_VAR.name, "".join(tmp)]); tmp = []
@@ -211,7 +219,16 @@ def create_lex_from_file(code):
 
 # It was create_parser_from_lex
 def check_lex_for_error(tokens):
+  imp_dir = "./examples/imports/"
+
   # TODO: Post on GitHub
+
+  # TODO: If Import directory exists
+  for tok in range(len(tokens)):
+    if tokens[tok][0] == Keywords.K_IMPORT.name:
+      try: open("%s%s" % (imp_dir, tokens[tok + 1][1]), "r")
+      except: print("File \"%s\" not found" % tokens[tok + 1][1]); exit(1)
+
   pass
 
 def generate_nasm_linux_x86_64_from_parser(parser):
@@ -240,9 +257,12 @@ def generate_nasm_linux_x86_64_from_parser(parser):
   asm_lines.append("_start:\n")
 
   while curr_tkn != len(parser):
+    # Macro
     if parser[curr_tkn][1] in Macros:
       uwu = curr_tkn # uwu
-  
+      
+      print(parser)
+
       # I hate programming >:( GFEZRARGTER 6453REFZHgyjtrhez6Y245 fuck python T-T
       for o in Macros[parser[curr_tkn][1]]: # Fucking things I don't understand why I wasn't working
         parser.insert(uwu, o)
@@ -250,11 +270,14 @@ def generate_nasm_linux_x86_64_from_parser(parser):
 
       len_ = len(Macros[parser[curr_tkn][1]]) # Get the len of the body of the macro
 
-      parser[curr_tkn] = ["uwu", "lol"] # Clear the token with the name of the macro
-    
-      curr_tkn = curr_tkn - len_ # Go Back some tokens
-      print(curr_tkn, len(parser)) # Does it work ?
+      parser.pop(curr_tkn)
 
+      print(parser)
+
+      curr_tkn = curr_tkn - (len_ + 1) # Go Back some tokens
+      # Does it work ?
+
+    # Syscall1
     elif parser[curr_tkn][0] == Keywords.K_SYSCALL1.name:
       asm_lines.append("    ; --- syscall1 ---\n")
       
@@ -262,7 +285,8 @@ def generate_nasm_linux_x86_64_from_parser(parser):
       asm_lines.append("    mov rdi, %s\n" % parser[curr_tkn - 2][1])
       asm_lines.append("    syscall\n")
       asm_lines.append("\n")
-
+    
+    # Syscall3
     elif parser[curr_tkn][0] == Keywords.K_SYSCALL3.name:
       asm_lines.append("    ; --- syscall3 ---\n")
       
@@ -282,6 +306,7 @@ def generate_nasm_linux_x86_64_from_parser(parser):
       asm_lines.append("\n")
       data_pos += 1
 
+    # Macro again
     elif parser[curr_tkn][0] == Keywords.K_MACRO.name:
       macro   = Macro(parser[curr_tkn + 1][1], [])
       rtokens = int()
@@ -291,14 +316,31 @@ def generate_nasm_linux_x86_64_from_parser(parser):
     
       curr_tkn += 1
       while parser[curr_tkn][0] != Keywords.K_END.name:
-        macro.tokens.append(parser[curr_tkn])
-        curr_tkn += 1; print(macro.tokens)
+        if parser[curr_tkn][1] == macro.name:
+          print("Cannot make a recursion in a recursion in a recursion in a recursion..."); exit(1)
+        else: macro.tokens.append(parser[curr_tkn])
+
+        curr_tkn += 1
     
       Macros[macro.name] = macro.tokens
-      print(Macros)
+
+    # Import
+    elif parser[curr_tkn][0] == Keywords.K_IMPORT.name:
+      import_dir  = "./examples/imports"
+      import_file = import_dir + "/" + parser[curr_tkn + 1][1]
+
+      print("Importing: \"%s/%s\"\n" % (import_dir, parser[curr_tkn + 1][1]))
+      imp_lex = create_lex_from_file(open("%s" % (import_file), "r"))
+      print("%s\n" % imp_lex)
+
+      check_lex_for_error(imp_lex)
+
+      imp_asm = generate_nasm_linux_x86_64_from_parser(imp_lex)
+      print("%s\n" % imp_asm)
+
+      print("%s.asm" % import_file[:import_file.find(".", 2)])
 
     curr_tkn += 1
-
 
   print("[DEBUG] Succesfully Generated Assembly From Parser\n")
   return asm_lines
