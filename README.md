@@ -6,13 +6,13 @@ You can only use it on linux.
 now you can use macro (function) <br/>
 to code faster. <br/>
 
-**You can create a macro
+**You can create a macro**
 ```
 macro foo in.
   4 "foo" 1 1 syscall3.
 end.
 ```
-**or use the standards macros
+**or use the standards macros**
 ```
 import "std.ghost"
 
