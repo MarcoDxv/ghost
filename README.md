@@ -1,6 +1,7 @@
 # ~ Ghost ~
 Dis is a programmin language uwu... <br/>
-You can only use it on linux. (It's not a [stack-oriented programming language](https://en.wikipedia.org/wiki/Stack-oriented_programming))
+You can only use it on linux.<br/>
+(It's not a [stack-oriented programming language](https://en.wikipedia.org/wiki/Stack-oriented_programming))
 
 ## Installation
 I don't know how to install it :( <br/> 
