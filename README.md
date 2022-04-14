@@ -2,6 +2,24 @@
 Dis is a programmin language uwu... <br/>
 You can only use it on linux.
 
+### New 1.0.1 (Macro Update)
+now you can use macro (function) <br/>
+to code faster. <br/>
+
+**You can create a macro
+```
+macro foo in.
+  4 "foo" 1 1 syscall3.
+end.
+```
+**or use the standards macros
+```
+import "std.ghost"
+
+13 "Hello, World" display.
+0 exit.
+```
+
 ## Installation
 I don't know how to install it :( <br/> 
 To use it I think you need [nasm](https://www.nasm.us/) an [ld](https://linux.die.net/man/1/ld)
@@ -11,13 +29,7 @@ To use it I think you need [nasm](https://www.nasm.us/) an [ld](https://linux.di
 13 "Hello, World" 1 1 syscall3.
 0 60 syscall1.
 ```
-**or use this code**
-```
-import "std.ghost"
 
-13 "Hello, World" display.
-0 exit.
-```
 **and compile with...**
 ```
 python3 ./ghost.py hello.ght -r hello --debug
