@@ -1,8 +1,9 @@
 # ~ Ghost ~
 Dis is a programmin language uwu... <br/>
-You can only use it on linux.
+You can only use it on linux. <br/>
+(It's not a [stack-oriented programming language](https://en.wikipedia.org/wiki/Stack-oriented_programming))
 
-### New 1.0.1 (Macro Update)
+### New-1.0.1 (Macro Update)
 now you can use macro (function) <br/>
 to code faster. <br/>
 
